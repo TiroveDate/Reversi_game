@@ -54,7 +54,7 @@ void print_board() {
 }
 
 int main(void) {
-    init_board();
+    init_board();   // test
     place_object_first();
     print_board();
     return 0;
