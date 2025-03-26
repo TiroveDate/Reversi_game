@@ -6,11 +6,12 @@
 #define WIDTH 8
 
 int board[HEIGHT][WIDTH];
+int player;
 
 typedef enum Object {
+    Empty,
     Dark,
     Light,
-    Empty,
 } Object;
 
 bool check_lange(int y, int x) {
@@ -87,7 +88,14 @@ void print_board() {
 }
 
 bool check_direction(int y, int x, Object col, int dy, int dx) {
+    y += dy;
+    x += dx;
 
+    if (board[y][x] == Empty || check_lange == false) {
+        return false;
+    }
+
+    return board[y][x] == col ? true : check_direction(y, x, col, dy, dx);
 }
 
 /*
@@ -110,15 +118,38 @@ bool check_around(int y, int x, Object col) {
     return false;
 }
 
-bool judge_put_disks(int y, int x, Object col) {
+bool put_disks(int y, int x, Object col) {
     if (check_lange(y, x)) {
         if (col == Dark) {
             if (check_around(y, x, Light)) {
+                return true;
             }
         }
-
         if (col == Light) {
+            if (check_around(y, x, Dark)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
+void game() {
+    printf("Let's start reversi game!\n");
+    printf("Choose your side. (1: Dark 2:Light) > ");
+    scanf("%d", &player);
+
+    if (player == Dark) {
+        int y = 0, x = 0;
+        printf("Enter your coordinates > ");
+        if (scanf("%d %d", &y, &x)) {
+            if (put_disks(y, x, Dark)) {
+                board[y - 1][x - 1] = Dark;
+                print_board();
+            } else {
+                printf("You can't put this coordinates!\n");
+                board[y - 1][x - 1] = Light;
+            }
         }
     }
 }
@@ -128,6 +159,7 @@ int main(void) {
     init_board();   
     place_object_first();
     // test_board();    // test
+    game();
     print_board();
     return 0;
 }
